@@ -5,14 +5,14 @@ If you want to create an encrypted backup of your data on a physical different l
 ## Design Criteria
 
   * Good backups follow the 3-2-1 rule:
-     ** You have at least 3 generations of backup
-     ** on at least 2 different media.
-     ** At any given point in time at least 1 of them is offline.
-     ** At any given point in time at least 1 of them is kept in a physical different lacation.
-  * No need to fully trust the storage provider.
+     * You have at least **3 generations** of backup
+     * on at least **2 different media**.
+     * At any given point in time at least **1** of them is **offline**.
+     * At any given point in time at least **1** of them is kept in a **physical different location**.
+  * No need to fully trust the storage provider. \
     (All encryption is done locally on a device you trust. The storage provide sees encrypted data only.)
   * Filenames of your data are considered to be sensitive - they are to be encrypted too.
-  * Internet bandwidth (for transferring backup data to the storage provider) is considered to be "of value".
+  * Internet bandwidth (for transferring backup data to the storage provider) is considered to be "of value". \
     (Backup size might be dozends or hundreds of GB in total, but upstream of a DSL connection is limited. Anyway you want the backup job to finish in reasonable time. Or maybe the volume of your internet traffic is limited by your contract.)
   * Even if the size of your data in total is huge, the amount of changed data between one backup and the next is way smaller.
     So you definitely want to transfer the changed data only (and do not want to transfer the complete backup again).
