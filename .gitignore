@@ -1,1 +1,3 @@
 *.swp
+.vagrant/*
+ssh-config.vagrant
