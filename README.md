@@ -33,14 +33,14 @@ If you want to create an encrypted backup of your data on a physical different l
 
 ## How to Create a Backup
 
-  * The script ´offsite_backup.sh´ provided here is meant as an example. You will need to edit it, to customize:
+  * The script `offsite_backup.sh` provided here is meant as an example. You will need to edit it, to customize:
      * Which files/directories you want to include/exclude in your backup.
      * Where your local cache storage is located.
      * Which storage provider to use (including storage path over there, your credentials, etc.)
 
 ## Testing offsite_backup.sh
 
-If you have [Vagrant](https://www.vagrantup.com/) installed and want to test ´offsite_backup.sh´ locally, it's easy to setup a storage provider:
+If you have [Vagrant](https://www.vagrantup.com/) installed and want to test `offsite_backup.sh` locally, it's easy to setup a storage provider:
 
 ```Bash
 vagrant up
