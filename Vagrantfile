@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "storage-provider.example.com" do |node|
     node.vm.box = "generic/alma8"
     node.vm.hostname = "storage-provider.example.com"
-    node.vm.provision :shell, inline: "yum install -y rsync"
+    node.vm.provision :shell, path: ".vagrant.bootstrap.sh"
   end
 
 end

@@ -37,3 +37,24 @@ If you want to create an encrypted backup of your data on a physical different l
      * Which files/directories you want to include/exclude in your backup.
      * Where your local cache storage is located.
      * Which storage provider to use (including storage path over there, your credentials, etc.)
+
+## Testing offsite_backup.sh
+
+If you have [Vagrant](https://www.vagrantup.com/) installed and want to test ´offsite_backup.sh´ locally, it's easy to setup a storage provider:
+
+```Bash
+vagrant up
+vagrant ssh-config > ssh-config.vagrant
+```
+
+Make sure you have a line like this in `~/.ssh/config` - right at the beginning
+
+```Bash
+Include ~/git/github/offsite_backup/ssh-config.vagrant
+```
+
+This makes sure you have:
+
+  * A host which is reachable as `storage-provider.example.com`
+  * A user `storageuser` there, with key authentication enabled
+  * So if you try `ssh storageuser@storage-provider.example.com` you should be able to login immediately, without being prompted for a password
