@@ -25,3 +25,15 @@ If you want to create an encrypted backup of your data on a physical different l
   * You need a local cache storage. A gocryptfs file system is created here.
   * The gocryptfs is mounted locally and your data is synchronized into the cleartext mountpoint by rsync.
   * The gocrpytfs is unmounted again - from this point in time you see encrypted data only in your local cache storage. This encrypted stuff is synchronized (again by rsync) to the (offsite) storage provider.
+  * The offsite storage provider can be anything which is rsync compliant (rsync via ssh should be preferred, but not mandatory):
+     * (Storage) offering of any web provider.
+     * A Raspberry Pi or NAS located at a friend. \
+       (This will probably need a port forwarding at the internet router plus a dynamic DNS name to make the storage reachable from your side.)
+     * etc.
+
+## How to Create a Backup
+
+  * The script ´offsite_backup.sh´ provided here is meant as an example. You will need to edit it, to customize:
+     * Which files/directories you want to include/exclude in your backup.
+     * Where your local cache storage is located.
+     * Which storage provider to use (including storage path over there, your credentials, etc.)
