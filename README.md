@@ -58,3 +58,4 @@ This makes sure you have:
   * A host which is reachable as `storage-provider.example.com`
   * A user `storageuser` there, with key authentication enabled
   * So if you try `ssh storageuser@storage-provider.example.com` you should be able to login immediately, without being prompted for a password
+  * Directory `/opt/offsite_backup/` is created there for you and owned by `storageuser`
