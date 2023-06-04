@@ -40,7 +40,7 @@ The script `offsite_backup.sh` provided here is meant as an example. You will ne
 
 For information on all commandline parameters, call `offsite_backup.sh -h`
 
-```Bash
+```
 ~# ./offsite_backup.sh -h
 
 call using:
