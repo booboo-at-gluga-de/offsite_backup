@@ -111,6 +111,15 @@ $0 -m
 $0 -u
     to umount the gocryptfs
 
+$0 -R
+    Restore:
+    sync the encrypted copy from the remote server
+    (${REMOTE_SERVER_HOSTNAME})
+    back to the local directory
+    ${SPOOL_DIR_CRYPTED}
+    Please note: The gocryptfs may not be mounted for restore.
+    (will try umount if needed)
+
 EOF
 }
 
@@ -154,20 +163,22 @@ update_max_rsync_rc_if_needed () {
     fi
 }
 
-init_gocryptfs () {
-    if [[ ! -d $SPOOL_DIR_CRYPTED ]]; then
-        mkdir -p $SPOOL_DIR_CRYPTED && chmod 700 $SPOOL_DIR_CRYPTED
+ensure_dir () {
+    DIR_PATH=$1
+
+    if [[ ! -d "$DIR_PATH" ]]; then
+        mkdir -p "$DIR_PATH" && chmod 700 "$DIR_PATH"
     fi
+}
+
+init_gocryptfs () {
+    ensure_dir $SPOOL_DIR_CRYPTED
     gocryptfs -init $SPOOL_DIR_CRYPTED
 }
 
 mount_gocryptfs () {
-    if [[ ! -d $SPOOL_DIR_CRYPTED ]]; then
-        mkdir -p $SPOOL_DIR_CRYPTED && chmod 700 $SPOOL_DIR_CRYPTED
-    fi
-    if [[ ! -d $SPOOL_DIR_CLEARTEXT ]]; then
-        mkdir -p $SPOOL_DIR_CLEARTEXT && chmod 700 $SPOOL_DIR_CLEARTEXT
-    fi
+    ensure_dir $SPOOL_DIR_CRYPTED
+    ensure_dir $SPOOL_DIR_CLEARTEXT
 
     echo
     echo -e "${LIGHT_BLUE}### mounting spool dir${NO_COLOR}"
@@ -181,8 +192,32 @@ mount_gocryptfs () {
 
 umount_gocryptfs () {
     echo
-    echo -e "${LIGHT_BLUE}### umounting spool dir${NO_COLOR}"
-    fusermount -u $SPOOL_DIR_CLEARTEXT || leave 1
+    echo -e "${LIGHT_BLUE}### checking if gocryptfs ${SPOOL_DIR_CRYPTED} is mounted${NO_COLOR}"
+    MOUNT_COUNT=$(mount | grep -c -e "^${SPOOL_DIR_CRYPTED} ")
+
+    if [[ $MOUNT_COUNT -eq 0 ]]; then
+        echo "No, not mounted"
+    else
+        echo
+        echo -e "${LIGHT_BLUE}### umounting spool dir${NO_COLOR}"
+        fusermount -u $SPOOL_DIR_CLEARTEXT || leave 1
+    fi
+}
+
+restore () {
+    ensure_dir $SPOOL_DIR_CRYPTED
+    ensure_dir $SPOOL_DIR_CLEARTEXT
+
+    echo
+    echo -e "${LIGHT_BLUE}### Restore: syncing back crypted content from remote server (${REMOTE_SERVER_HOSTNAME}) to ${SPOOL_DIR_CRYPTED}${NO_COLOR}"
+    # need to create a command like
+    # rsync -avP --delete --delete-before -e "ssh -i /root/.ssh/id_ed25519.offsite_backup" storageuser@storage-provider.example.com:/opt/offsite_backup/crypted/* /var/cache/offsite_backup/crypted
+    BASENAME_SPOOL_DIR_CRYPTED=$(basename $SPOOL_DIR_CRYPTED)
+    # shellcheck disable=SC2086
+    rsync -avP ${REMOTE_SERVER_RSYNC_OPTIONS} --delete --delete-before -e "ssh ${REMOTE_SERVER_SSH_OPTIONS}" ${REMOTE_SERVER_USERNAME}@${REMOTE_SERVER_HOSTNAME}:${REMOTE_SERVER_DIR}/${BASENAME_SPOOL_DIR_CRYPTED}/* ${SPOOL_DIR_CRYPTED}
+    update_max_rsync_rc_if_needed $?
+
+    leave "$MAX_RSYNC_RC"
 }
 
 set_colors () {
@@ -225,7 +260,7 @@ UPDATE_REMOTE_COPY=1
 set_colors
 
 # .-- commandline parameters -------------------------------------------------
-while getopts iumrlh opt
+while getopts iumRrlh opt
 do
     case $opt in
         i)
@@ -238,6 +273,11 @@ do
             ;;
         m)
             mount_gocryptfs
+            leave 0
+            ;;
+        R)
+            umount_gocryptfs
+            restore
             leave 0
             ;;
         r)

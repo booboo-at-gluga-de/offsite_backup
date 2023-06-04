@@ -33,10 +33,48 @@ If you want to create an encrypted backup of your data on a physical different l
 
 ## How to Create a Backup
 
-  * The script `offsite_backup.sh` provided here is meant as an example. You will need to edit it, to customize:
-     * Which files/directories you want to include/exclude in your backup.
-     * Where your local cache storage is located.
-     * Which storage provider to use (including storage path over there, your credentials, etc.)
+The script `offsite_backup.sh` provided here is meant as an example. You will need to edit it, to customize:
+  * Which files/directories you want to include/exclude in your backup.
+  * Where your local cache storage is located.
+  * Which storage provider to use (including storage path over there, your credentials, etc.)
+
+For information on all commandline parameters, call `offsite_backup.sh -h`
+
+```Bash
+~# ./offsite_backup.sh -h
+
+call using:
+
+./offsite_backup.sh
+    to start an offsite backup
+
+./offsite_backup.sh -l
+    update local copy only
+    (do not sync it to remote)
+
+./offsite_backup.sh -r
+    sync local copy to the remote location only
+    (but do not update the local copy)
+
+./offsite_backup.sh -i
+    to initialize the gocryptfs in /var/cache/offsite_backup/crypted
+
+./offsite_backup.sh -m
+    to mount the gocryptfs to /var/cache/offsite_backup/cleartext
+
+./offsite_backup.sh -u
+    to umount the gocryptfs
+
+./offsite_backup.sh -R
+    Restore:
+    sync the encrypted copy from the remote server
+    (storage-provider.example.com)
+    back to the local directory
+    /var/cache/offsite_backup/crypted
+    Please note: The gocryptfs may not be mounted for restore.
+    (will try umount if needed)
+```
+
 
 ## Testing offsite_backup.sh
 
